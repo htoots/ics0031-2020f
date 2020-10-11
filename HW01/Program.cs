@@ -344,21 +344,24 @@ namespace ConsoleApp01
 
         static ulong DiffiePow(ulong a, ulong b, ulong c)
         {
-            if (a == 0) return 0;
-            if (b == 0) return 1;
+            checked
+            {
+                if (a == 0) return 0;
+                if (b == 0) return 1;
 
-            ulong y;
-            if (b % 2 == 0)
-            {
-                y = DiffiePow(a, b / 2, c);
-                y = (y * y) % c;
+                ulong y;
+                if (b % 2 == 0)
+                {
+                    y = DiffiePow(a, b / 2, c);
+                    y = (y * y) % c;
+                }
+                else
+                {
+                    y = a % c;
+                    y = (y * DiffiePow(a, b - 1, c) % c) % c;
+                }
+                return (y + c) % c;
             }
-            else
-            {
-                y = a % c;
-                y = (y * DiffiePow(a, b - 1, c) % c) % c;
-            }
-            return (y + c) % c;
         }
         static List<ulong> DiffieHellmanCalc(ulong secret1, ulong secret2, ulong modulusp, ulong baseg)
         {
@@ -367,6 +370,7 @@ namespace ConsoleApp01
             
             ulong k1 = DiffiePow(s2, secret1, modulusp);
             ulong k2 = DiffiePow(s1, secret2, modulusp);
+            
             List<ulong> result = new List<ulong>();
             result.Add(k1);
             result.Add(k2);
