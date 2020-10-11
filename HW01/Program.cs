@@ -293,18 +293,24 @@ namespace ConsoleApp01
             {
                 secretA = GetUserNumber("secret A");
                 secretB = GetUserNumber("secret B");
-                modp = GetUserNumber("modulus p");
-                baseg = GetUserNumber("public base g");
+                modp = GetUserNumber("modulus p (has to be prime)");
+                baseg = GetUserNumber("public base g (has to be prime)");
 
                 check[0] = PrimalityTest(modp);
                 check[1] = PrimalityTest(baseg);
-                
-                if (check[0] == false) Console.WriteLine("modulus base p is not prime, restarting inputs.");
-                if (check[1] == false) Console.WriteLine("public base g is not prime, restarting inputs.");
+                if (check[0] == false || check[1] == false)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Primality tests:");
+                    Console.WriteLine("Modulus p: " + (check[0] ? "True" : "False"));
+                    Console.WriteLine("Public base g: " + (check[1] ? "True" : "False"));
+                    Console.WriteLine("At least one of these failed, please redo the inputs.");
+                }
             } while (check[0] == false || check[1] == false);
 
             List<ulong> results = DiffieHellmanCalc(secretA, secretB, modp, baseg);
             Console.WriteLine();
+            Console.WriteLine("Keys for both parties (debug and confirmation):");
             foreach (var key in results)
             {
                 Console.WriteLine("Key: " + key);
@@ -346,30 +352,24 @@ namespace ConsoleApp01
             {
                 y = DiffiePow(a, b / 2, c);
                 y = (y * y) % c;
-
             }
             else
             {
                 y = a % c;
                 y = (y * DiffiePow(a, b - 1, c) % c) % c;
             }
-
             return (y + c) % c;
         }
         static List<ulong> DiffieHellmanCalc(ulong secret1, ulong secret2, ulong modulusp, ulong baseg)
         {
-
             ulong s1 = DiffiePow(baseg, secret1, modulusp);
             ulong s2 = DiffiePow(baseg, secret2, modulusp);
-
+            
             ulong k1 = DiffiePow(s2, secret1, modulusp);
             ulong k2 = DiffiePow(s1, secret2, modulusp);
-
             List<ulong> result = new List<ulong>();
-            
             result.Add(k1);
             result.Add(k2);
-
             return result;
         }
     }
