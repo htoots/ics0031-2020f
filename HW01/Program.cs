@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -15,11 +17,12 @@ namespace ConsoleApp01
                 Console.WriteLine();
                 Console.WriteLine("1) Caesar cipher");
                 Console.WriteLine("2) Vigenere cipher");
+                Console.WriteLine("3) Diffie Hellman key exchange");
                 Console.WriteLine("X) Exit");
                 Console.Write(">");
-
+            
                 userInput = Console.ReadLine()?.ToLower();
-
+            
                 switch (userInput)
                 {
                     case "1":
@@ -27,6 +30,9 @@ namespace ConsoleApp01
                         break;
                     case "2":
                         Vigenere();
+                        break;
+                    case "3":
+                        DiffieHellman();
                         break;
                     case "x":
                         Console.WriteLine("closing down...");
@@ -245,6 +251,126 @@ namespace ConsoleApp01
         static string Base64Decode(string base64EncodedData) {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        static bool PrimalityTest(ulong input, int k = 5)
+        {
+            // Miller-Rabin primality test implementation
+            // int k = depth of likeliness
+            if ((input < 2) || (input % 2 == 0)) return (input == 2);
+
+            ulong s = input - 1;
+            while (s % 2 == 0) s >>= 1;
+
+            Random r = new Random();
+
+            for (int i = 0; i < k; i++)
+            {
+                int a = r.Next((int) (input - 1)) + 1;
+                ulong temp = s;
+                long mod = 1;
+                for (ulong j = 0; j < temp; ++j) mod = (mod * a) % (long) input;
+                while (temp != input - 1 && mod != 1 && mod != (long) (input - 1))
+                {
+                    mod = (mod * mod) % (long) input;
+                    temp *= 2;
+                }
+
+                if (mod != (long) (input - 1) && temp % 2 == 0) return false;
+            }
+
+            return true;
+        }
+
+        static void DiffieHellman()
+        {
+            bool[] check = new bool[2];
+            ulong secretA;
+            ulong secretB;
+            ulong modp;
+            ulong baseg;
+            do
+            {
+                secretA = GetUserNumber("secret A");
+                secretB = GetUserNumber("secret B");
+                modp = GetUserNumber("modulus p");
+                baseg = GetUserNumber("public base g");
+
+                check[0] = PrimalityTest(modp);
+                check[1] = PrimalityTest(baseg);
+                
+                if (check[0] == false) Console.WriteLine("modulus base p is not prime, restarting inputs.");
+                if (check[1] == false) Console.WriteLine("public base g is not prime, restarting inputs.");
+            } while (check[0] == false || check[1] == false);
+
+            List<ulong> results = DiffieHellmanCalc(secretA, secretB, modp, baseg);
+            Console.WriteLine();
+            foreach (var key in results)
+            {
+                Console.WriteLine("Key: " + key);
+            }
+        }
+
+        static ulong GetUserNumber(string type)
+        {
+            do
+            {
+                Console.WriteLine("Input " + type + ": ");
+                var userInput = Console.ReadLine();
+                if (ulong.TryParse(userInput, out ulong nr))
+                {
+                    return nr;
+                }
+                Console.WriteLine("Unable to parse input as ulong. Try again.");
+            } while (true);
+        }
+        // Test function
+        // static ulong DiffiePow(ulong a, ulong b, ulong c)
+        // {
+        //     ulong res = 1;
+        //     for (ulong i = 0; i < b; i++)
+        //     {
+        //         res = (res * a) % c;
+        //     }
+        //
+        //     return res;
+        // }
+
+        static ulong DiffiePow(ulong a, ulong b, ulong c)
+        {
+            if (a == 0) return 0;
+            if (b == 0) return 1;
+
+            ulong y;
+            if (b % 2 == 0)
+            {
+                y = DiffiePow(a, b / 2, c);
+                y = (y * y) % c;
+
+            }
+            else
+            {
+                y = a % c;
+                y = (y * DiffiePow(a, b - 1, c) % c) % c;
+            }
+
+            return (y + c) % c;
+        }
+        static List<ulong> DiffieHellmanCalc(ulong secret1, ulong secret2, ulong modulusp, ulong baseg)
+        {
+
+            ulong s1 = DiffiePow(baseg, secret1, modulusp);
+            ulong s2 = DiffiePow(baseg, secret2, modulusp);
+
+            ulong k1 = DiffiePow(s2, secret1, modulusp);
+            ulong k2 = DiffiePow(s1, secret2, modulusp);
+
+            List<ulong> result = new List<ulong>();
+            
+            result.Add(k1);
+            result.Add(k2);
+
+            return result;
         }
     }
 }
