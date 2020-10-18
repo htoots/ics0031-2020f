@@ -337,17 +337,6 @@ namespace ConsoleApp01
                 Console.WriteLine("Unable to parse input as ulong. Try again.");
             } while (true);
         }
-        // Test function
-        // static ulong DiffiePow(ulong a, ulong b, ulong c)
-        // {
-        //     ulong res = 1;
-        //     for (ulong i = 0; i < b; i++)
-        //     {
-        //         res = (res * a) % c;
-        //     }
-        //
-        //     return res;
-        // }
 
         static ulong DiffiePow(ulong a, ulong b, ulong c)
         {

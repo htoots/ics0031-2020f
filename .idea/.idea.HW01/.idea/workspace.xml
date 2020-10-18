@@ -23,7 +23,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8574ccf7-cf02-4d74-97e9-036e85f7c673" name="Default Changelist" comment="add quick check for overflow in calculations">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HW01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HW01/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HW01/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HW01/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +87,7 @@
       <option name="presentableId" value="Default" />
       <updated>1602178694971</updated>
       <workItem from="1602178700413" duration="12960000" />
-      <workItem from="1603012578745" duration="11292000" />
+      <workItem from="1603012578745" duration="11549000" />
     </task>
     <task id="LOCAL-00001" summary="add Diffie-Hellman option">
       <created>1602434502929</created>
@@ -146,22 +145,22 @@
     <option name="LAST_COMMIT_MESSAGE" value="add quick check for overflow in calculations" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1398" height="284" key="GridCell.Tab.0.bottom" timestamp="1603037663679">
+    <state width="1398" height="284" key="GridCell.Tab.0.bottom" timestamp="1603039061499">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="284" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1603037663679" />
-    <state width="1398" height="284" key="GridCell.Tab.0.center" timestamp="1603037663678">
+    <state width="1398" height="284" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1603039061499" />
+    <state width="1398" height="284" key="GridCell.Tab.0.center" timestamp="1603039061498">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="284" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1603037663678" />
-    <state width="1398" height="284" key="GridCell.Tab.0.left" timestamp="1603037663677">
+    <state width="1398" height="284" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1603039061498" />
+    <state width="1398" height="284" key="GridCell.Tab.0.left" timestamp="1603039061497">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="284" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1603037663677" />
-    <state width="1398" height="284" key="GridCell.Tab.0.right" timestamp="1603037663678">
+    <state width="1398" height="284" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1603039061497" />
+    <state width="1398" height="284" key="GridCell.Tab.0.right" timestamp="1603039061498">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="284" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1603037663678" />
+    <state width="1398" height="284" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1603039061498" />
     <state width="1398" height="331" key="GridCell.Tab.1.bottom" timestamp="1603037325682">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
