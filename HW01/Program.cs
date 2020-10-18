@@ -427,20 +427,11 @@ namespace ConsoleApp01
         static void BruteForceRSA(ulong n, ulong cipher)
         {
             // Tested with n = 133, message 6 (like on slides)
-            Console.WriteLine($"\n\nBrute force RSA with public {n} and ciphered text {cipher} from RSA function");
+            Console.WriteLine($"\n\nBrute force RSA with public '{n}' and ciphered text '{cipher}' from RSA function");
             ulong p = Convert.ToUInt64(Math.Floor(Math.Sqrt(n)));
-            if (p % 2 == 0) p -= 1;
+            p = CheckEven(p);
             Console.WriteLine($"Testing possible value of p from {p} down to 0");
-            do
-            {
-                p--;
-                // Failsafe
-                if (p < 1)
-                {
-                    Console.WriteLine("Could not find p, exiting");
-                    return;
-                }
-            } while (n % p != 0);
+            p = GetP(p, n);
 
             Console.WriteLine($"Found possible p: {p}");
             ulong q = n / p;
@@ -467,6 +458,28 @@ namespace ConsoleApp01
             var plainMsg = UlongPow(cipher, d, n);
             Console.WriteLine($"Possible plain message: {plainMsg}");
 
+        }
+
+        public static ulong CheckEven(ulong input)
+        {
+            if (input == 2) return input;
+            return input % 2 == 0 ? input - 1 : input;
+        }
+
+        public static ulong GetP(ulong p, ulong n)
+        {
+            while (n % p != 0)
+            {
+                p--;
+                // Failsafe, should never happen
+                if (p < 1)
+                {
+                    Console.WriteLine("Could not find p, exiting");
+                    throw new ArithmeticException("Unable to calculate prime p");
+                }
+            }
+
+            return p;
         }
 
         public static Tuple<ulong, ulong> RSACalculations(ulong m)
