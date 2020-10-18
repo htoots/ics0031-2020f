@@ -429,6 +429,7 @@ namespace ConsoleApp01
             // Tested with n = 133, message 6 (like on slides)
             Console.WriteLine($"\n\nBrute force RSA with public {n} and ciphered text {cipher} from RSA function");
             ulong p = Convert.ToUInt64(Math.Floor(Math.Sqrt(n)));
+            if (p % 2 == 0) p -= 1;
             Console.WriteLine($"Testing possible value of p from {p} down to 0");
             do
             {
