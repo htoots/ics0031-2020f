@@ -387,13 +387,26 @@ namespace ConsoleApp01
         static void CustomRSA()
         {
             Console.WriteLine("RSA");
-            Console.Write("1st prime p:");
             // try parse
-            var pStr = Console.ReadLine();
-            var p = ulong.Parse(pStr);
-            Console.Write("1st prime q:");
-            var qStr = Console.ReadLine();
-            var q = ulong.Parse(qStr);
+            ulong p;
+            ulong q;
+            bool[] check = new bool[2];
+            do
+            {
+                p = GetUserNumber("p (has to be prime)");
+                q = GetUserNumber("q (has to be prime)");
+
+                check[0] = PrimalityTest(p);
+                check[1] = PrimalityTest(q);
+                if (check[0] == false || check[1] == false)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Primality tests:");
+                    Console.WriteLine("p: " + (check[0] ? "True" : "False"));
+                    Console.WriteLine("q: " + (check[1] ? "True" : "False"));
+                    Console.WriteLine("At least one of these failed, please redo the inputs.");
+                }
+            } while (check[0] == false || check[1] == false);
 
             Console.WriteLine($"p: {p} q: {q}");
 
@@ -403,6 +416,71 @@ namespace ConsoleApp01
             Console.WriteLine($"n = p * q : {n}");
             Console.WriteLine($"m = (p - 1) * (q - 1) : {m}");
 
+            Tuple<ulong, ulong> RSAValues = RSACalculations(m);
+            ulong e = RSAValues.Item1;
+            ulong d = RSAValues.Item2;
+
+            Console.WriteLine($"Public key ({n}, {e})");
+            Console.WriteLine($"Private key ({n}, {d})");
+            
+            ulong message = GetUserNumber("Message (number to encrypt)");
+
+            var cipher = UlongPow(message, e, n);
+            Console.WriteLine($"Cipher: {cipher}");
+
+            var plainMsg = UlongPow(cipher, d, n);
+            Console.WriteLine($"Plain msg: {plainMsg}");
+
+            BruteForceRSA(n, cipher);
+        }
+
+        // Brute force break RSA with public key and cipher message
+        static void BruteForceRSA(ulong n, ulong cipher)
+        {
+            // Tested with n = 133, message 6 (like on slides)
+            Console.WriteLine($"\n\nBrute force RSA with public {n} and ciphered text {cipher} from RSA function");
+            ulong p = Convert.ToUInt64(Math.Floor(Math.Sqrt(n)));
+            Console.WriteLine($"Testing possible value of p from {p} down to 0");
+            do
+            {
+                p--;
+                // Failsafe
+                if (p < 1)
+                {
+                    Console.WriteLine("Could not find p, exiting");
+                    return;
+                }
+            } while (n % p != 0);
+
+            Console.WriteLine($"Found possible p: {p}");
+            ulong q = n / p;
+            Console.WriteLine($"Found possible q : {q}");
+
+            ulong check = p * q;
+            Console.WriteLine($"!!! p * q should be '{n}', is '{check}'");
+
+            if (check != n)
+            {
+                Console.WriteLine("Cracking failed, p * q does not equal n, exiting...");
+                return;
+            }
+            Console.WriteLine($"p: {p}, and q: {q}. Calculating (p-1)*(q-1)");
+            ulong m = (p - 1) * (q - 1);
+            Console.WriteLine($"m = {m}");
+
+            Tuple<ulong, ulong> RSAValues = RSACalculations(m);
+            ulong e = RSAValues.Item1;
+            ulong d = RSAValues.Item2;
+
+            Console.WriteLine($"e = {e}, d = {d}");
+            Console.WriteLine($"Cracking ciphered message: {cipher}");
+            var plainMsg = UlongPow(cipher, d, n);
+            Console.WriteLine($"Possible plain message: {plainMsg}");
+
+        }
+
+        public static Tuple<ulong, ulong> RSACalculations(ulong m)
+        {
             ulong e;
             for (e = 2; e < ulong.MaxValue; e++)
             {
@@ -418,20 +496,7 @@ namespace ConsoleApp01
                     break;
                 }
             }
-
-            Console.WriteLine($"Public key ({n}, {e})");
-            Console.WriteLine($"Private key ({n}, {d})");
-            
-            Console.Write("Message (number to encrypt): ");
-            //try parse
-            var messageStr = Console.ReadLine();
-            ulong message = ulong.Parse(messageStr);
-
-            var cipher = UlongPow(message, e, n);
-            Console.WriteLine($"Cipher: {cipher}");
-
-            var plainMsg = UlongPow(cipher, d, n);
-            Console.WriteLine($"Plain msg: {plainMsg}");
+            return new Tuple<ulong, ulong>(e, d);
         }
 
         private static ulong UlongPow(ulong baseNum, ulong exponent, ulong modulus)
