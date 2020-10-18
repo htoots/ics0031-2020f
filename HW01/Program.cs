@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Runtime;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,6 +21,7 @@ namespace ConsoleApp01
                 Console.WriteLine("1) Caesar cipher");
                 Console.WriteLine("2) Vigenere cipher");
                 Console.WriteLine("3) Diffie Hellman key exchange");
+                Console.WriteLine("4) RSA");
                 Console.WriteLine("X) Exit");
                 Console.Write(">");
             
@@ -33,6 +37,9 @@ namespace ConsoleApp01
                         break;
                     case "3":
                         DiffieHellman();
+                        break;
+                    case "4":
+                        CustomRSA();
                         break;
                     case "x":
                         Console.WriteLine("closing down...");
@@ -375,6 +382,76 @@ namespace ConsoleApp01
             result.Add(k1);
             result.Add(k2);
             return result;
+        }
+
+        static void CustomRSA()
+        {
+            Console.WriteLine("RSA");
+            Console.Write("1st prime p:");
+            // try parse
+            var pStr = Console.ReadLine();
+            var p = ulong.Parse(pStr);
+            Console.Write("1st prime q:");
+            var qStr = Console.ReadLine();
+            var q = ulong.Parse(qStr);
+
+            Console.WriteLine($"p: {p} q: {q}");
+
+            var n = p * q;
+            var m = (p - 1) * (q - 1);
+            
+            Console.WriteLine($"n = p * q : {n}");
+            Console.WriteLine($"m = (p - 1) * (q - 1) : {m}");
+
+            ulong e;
+            for (e = 2; e < ulong.MaxValue; e++)
+            {
+                if (GCD(m, e) == 1) break;
+            }
+
+            ulong d = 0;
+            for (ulong k = 2; k < ulong.MaxValue; k++)
+            {
+                if ((1 + k * m) % e == 0)
+                {
+                    d = (1 + k * m) / e;
+                    break;
+                }
+            }
+
+            Console.WriteLine($"Public key ({n}, {e})");
+            Console.WriteLine($"Private key ({n}, {d})");
+            
+            Console.Write("Message (number to encrypt): ");
+            //try parse
+            var messageStr = Console.ReadLine();
+            ulong message = ulong.Parse(messageStr);
+
+            var cipher = UlongPow(message, e, n);
+            Console.WriteLine($"Cipher: {cipher}");
+
+            var plainMsg = UlongPow(cipher, d, n);
+            Console.WriteLine($"Plain msg: {plainMsg}");
+        }
+
+        private static ulong UlongPow(ulong baseNum, ulong exponent, ulong modulus)
+        {
+            if (modulus == 1) return 0;
+            var curPow = baseNum % modulus;
+            ulong res = 1;
+            while (exponent > 0)
+            {
+                if (exponent % 2 == 1) res = (res * curPow) % modulus;
+                exponent = exponent / 2;
+                curPow = (curPow * curPow) % modulus;
+            }
+            return res;
+        }
+
+        static ulong GCD(ulong a, ulong b)
+        {
+            if (a == 0) return b;
+            return GCD(b % a, a);
         }
     }
 }
