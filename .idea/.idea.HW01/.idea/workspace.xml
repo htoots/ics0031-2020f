@@ -24,7 +24,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8574ccf7-cf02-4d74-97e9-036e85f7c673" name="Default Changelist" comment="add quick check for overflow in calculations">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.HW01/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HW01/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HW01/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HW01/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +88,7 @@
       <updated>1602178694971</updated>
       <workItem from="1602178700413" duration="12960000" />
       <workItem from="1603012578745" duration="11808000" />
-      <workItem from="1603042553375" duration="674000" />
+      <workItem from="1603042553375" duration="1020000" />
     </task>
     <task id="LOCAL-00001" summary="add Diffie-Hellman option">
       <created>1602434502929</created>
