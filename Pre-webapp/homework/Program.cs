@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Runtime;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ConsoleApp01
+namespace homework
 {
     class Program
     {
