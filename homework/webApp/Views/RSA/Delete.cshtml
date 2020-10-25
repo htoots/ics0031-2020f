@@ -23,6 +23,18 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PrimeQ)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BaseText)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BaseText)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EncryptedText)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EncryptedText)
+        </dd>
     </dl>
     
     <form asp-action="Delete">

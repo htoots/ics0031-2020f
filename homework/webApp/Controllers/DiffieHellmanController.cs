@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Crypto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -54,10 +55,33 @@ namespace webApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SecretA,SecretB,ModulusP,BaseG")] DiffieHellmanClass diffieHellmanClass)
+        public async Task<IActionResult> Create(DiffieHellmanClass diffieHellmanClass)
         {
+            if (diffieHellmanClass.SecretA <= 0)
+            {
+                ModelState.AddModelError(nameof(diffieHellmanClass.SecretA), "SecretA cannot be 0 or lower");
+            }
+
+            if (diffieHellmanClass.SecretB <= 0)
+            {
+                ModelState.AddModelError(nameof(diffieHellmanClass.SecretB), "SecretB cannot be 0 or lower");
+            }
+            if (!Helpers.PrimalityTest(diffieHellmanClass.BaseG) || diffieHellmanClass.BaseG <= 0)
+            {
+                ModelState.AddModelError(nameof(diffieHellmanClass.BaseG), "BaseG has to be prime and bigger than 0");
+            }
+
+            if (!Helpers.PrimalityTest(diffieHellmanClass.ModulusP) || diffieHellmanClass.ModulusP <= 0)
+            {
+                ModelState.AddModelError(nameof(diffieHellmanClass.ModulusP), "ModulusP has to be prime and bigger than 0");
+            }
+
             if (ModelState.IsValid)
             {
+                List<ulong> keyList = DiffieHellman.DiffieHellmanCalc(diffieHellmanClass.SecretA,
+                    diffieHellmanClass.SecretB, diffieHellmanClass.ModulusP, diffieHellmanClass.BaseG);
+                diffieHellmanClass.Key1 = keyList[0];
+                diffieHellmanClass.Key2 = keyList[1];
                 _context.Add(diffieHellmanClass);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +110,7 @@ namespace webApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SecretA,SecretB,ModulusP,BaseG")] DiffieHellmanClass diffieHellmanClass)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SecretA,SecretB,ModulusP,BaseG,Key1,Key2")] DiffieHellmanClass diffieHellmanClass)
         {
             if (id != diffieHellmanClass.Id)
             {

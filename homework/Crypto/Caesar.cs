@@ -9,7 +9,7 @@ namespace Crypto
             var inputBytes = Encoding.Default.GetBytes(input);
             return CaesarEncrypt(inputBytes, shiftAmount, choice);
         }
-        static byte[] CaesarEncrypt(byte[] input, byte shiftAmount, int choice)
+        static byte[] CaesarEncrypt(byte[] input, byte shiftAmount, int choice = 1)
         {
             var result = new byte[input.Length];
             if (shiftAmount == 0)

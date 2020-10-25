@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using webApp.Data;
 
-namespace webApp.Data.Migrations
+namespace webApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201019142318_InitialDbCreation")]
+    [Migration("20201025142734_InitialDbCreation")]
     partial class InitialDbCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,12 @@ namespace webApp.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<ulong>("BaseG")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("Key1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("Key2")
                         .HasColumnType("INTEGER");
 
                     b.Property<ulong>("ModulusP")
@@ -47,6 +53,12 @@ namespace webApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("BaseText")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("EncryptedText")
+                        .HasColumnType("BLOB");
+
                     b.Property<ulong>("PrimeP")
                         .HasColumnType("INTEGER");
 
@@ -55,7 +67,7 @@ namespace webApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RSAResults");
+                    b.ToTable("RsaResults");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

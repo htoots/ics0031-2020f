@@ -15,7 +15,7 @@ namespace webApp.Data
         }
         
         public DbSet<DiffieHellmanClass> DiffieHellmanResults { get; set; }
-        public DbSet<RSAClass> RSAResults { get; set; }
+        public DbSet<RSAClass> RsaResults { get; set; }
         
     }
 }

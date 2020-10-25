@@ -11,7 +11,9 @@ namespace Domain
         public ulong ModulusP { get; set; }
         public ulong BaseG { get; set; }
         
-        public List<ulong> Keys { get; set; }
+        public ulong Key1 { get; set; }
+        
+        public ulong Key2 { get; set; }
 
     }
 }

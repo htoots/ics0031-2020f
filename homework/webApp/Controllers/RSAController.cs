@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Crypto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using webApp.Data;
 
 namespace webApp.Controllers
@@ -22,7 +24,7 @@ namespace webApp.Controllers
         // GET: RSA
         public async Task<IActionResult> Index()
         {
-            return View(await _context.RSAResults.ToListAsync());
+            return View(await _context.RsaResults.ToListAsync());
         }
 
         // GET: RSA/Details/5
@@ -33,7 +35,7 @@ namespace webApp.Controllers
                 return NotFound();
             }
 
-            var rSAClass = await _context.RSAResults
+            var rSAClass = await _context.RsaResults
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (rSAClass == null)
             {
@@ -54,15 +56,29 @@ namespace webApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PrimeP,PrimeQ")] RSAClass rSAClass)
+        public async Task<IActionResult> Create(RSAClass RsaClass)
         {
+            if (!Helpers.PrimalityTest(RsaClass.PrimeP) || RsaClass.PrimeP <= 0)
+            {
+                ModelState.AddModelError(nameof(RsaClass.PrimeP), "PrimeP has to be a Prime and bigger than 0");
+            }
+
+            if (!Helpers.PrimalityTest(RsaClass.PrimeQ) || RsaClass.PrimeQ <= 0)
+            {
+                ModelState.AddModelError(nameof(RsaClass.PrimeQ), "PrimeQ has to be a prime and bigger than 0");
+            }
+
+            if (String.IsNullOrEmpty(RsaClass.BaseText))
+            {
+                ModelState.AddModelError(nameof(RsaClass.BaseText), "BaseText cannot be empty");
+            }
             if (ModelState.IsValid)
             {
-                _context.Add(rSAClass);
+                _context.Add(RsaClass);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(rSAClass);
+            return View(RsaClass);
         }
 
         // GET: RSA/Edit/5
@@ -73,7 +89,7 @@ namespace webApp.Controllers
                 return NotFound();
             }
 
-            var rSAClass = await _context.RSAResults.FindAsync(id);
+            var rSAClass = await _context.RsaResults.FindAsync(id);
             if (rSAClass == null)
             {
                 return NotFound();
@@ -86,7 +102,7 @@ namespace webApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PrimeP,PrimeQ")] RSAClass rSAClass)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PrimeP,PrimeQ,BaseText,EncryptedText")] RSAClass rSAClass)
         {
             if (id != rSAClass.Id)
             {
@@ -124,7 +140,7 @@ namespace webApp.Controllers
                 return NotFound();
             }
 
-            var rSAClass = await _context.RSAResults
+            var rSAClass = await _context.RsaResults
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (rSAClass == null)
             {
@@ -139,15 +155,15 @@ namespace webApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rSAClass = await _context.RSAResults.FindAsync(id);
-            _context.RSAResults.Remove(rSAClass);
+            var rSAClass = await _context.RsaResults.FindAsync(id);
+            _context.RsaResults.Remove(rSAClass);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RSAClassExists(int id)
         {
-            return _context.RSAResults.Any(e => e.Id == id);
+            return _context.RsaResults.Any(e => e.Id == id);
         }
     }
 }

@@ -5,6 +5,10 @@ namespace Crypto
     
     public static class RSA
     {
+        public static NotImplementedException RSAEncryptString(string input, ulong expo, ulong mod)
+        {
+            return new NotImplementedException();
+        }
         public static Tuple<ulong, ulong> RSACalculations(ulong m)
         {
             ulong e;

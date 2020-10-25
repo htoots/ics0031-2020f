@@ -8,4 +8,4 @@ dotnet ef migrations remove
 dotnet ef database drop
 rm -f ./Data/Migrations/
 dotnet ef migrations add InitialDbCreation
-dotnet ef database upgrade
+dotnet ef database update
