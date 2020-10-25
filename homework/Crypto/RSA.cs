@@ -1,15 +1,43 @@
 using System;
+using System.Text;
 
 namespace Crypto
 {
     
     public static class RSA
     {
-        public static NotImplementedException RSAEncryptString(string input, ulong expo, ulong mod)
+        public static byte[] RsaEncryptString(string input, ulong PrimeP, ulong PrimeQ)
         {
-            return new NotImplementedException();
+            var inputBytes = Helpers.GetBytes(input);
+            ulong n = PrimeP * PrimeQ;
+            ulong m = (PrimeP - 1) * (PrimeQ - 1);
+            Tuple<ulong, ulong> rsaValues = RsaCalculations(m);
+            ulong e = rsaValues.Item1;
+            return RsaCalculator(inputBytes, e, n);
         }
-        public static Tuple<ulong, ulong> RSACalculations(ulong m)
+        // Dirty debug testing
+        // public static byte[] RsaDecrypt(byte [] inputBytes, ulong PrimeP, ulong PrimeQ)
+        // {
+        //     ulong n = PrimeP * PrimeQ;
+        //     ulong m = (PrimeP - 1) * (PrimeQ - 1);
+        //     Tuple<ulong, ulong> RsaValues = RsaCalculations(m);
+        //     ulong d = RsaValues.Item2;
+        //     return RsaCalculator(inputBytes, d, n);
+        // }
+
+        private static byte[] RsaCalculator(byte[] inputBytes, ulong expo, ulong mod)
+        {
+            var result = new byte[inputBytes.Length];
+            for (var i = 0; i < inputBytes.Length; i++)
+            {
+                var newValue = (UlongPow(inputBytes[i], expo, mod));
+                    if (newValue > byte.MaxValue) newValue -= byte.MaxValue;
+                    result[i] = (byte) newValue;
+            }
+
+            return result;
+        }
+        public static Tuple<ulong, ulong> RsaCalculations(ulong m)
         {
             ulong e;
             for (e = 2; e < ulong.MaxValue; e++)

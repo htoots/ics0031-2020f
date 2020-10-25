@@ -19,13 +19,15 @@ namespace Crypto
             Console.WriteLine("Base64 result:");
             Console.WriteLine(Base64Encode(stringResult));
         }
-        
-        static string Base64Encode(string plainText) {
+
+        static string Base64Encode(string plainText)
+        {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(plainTextBytes);
         }
-        
-        static string Base64Decode(string base64EncodedData) {
+
+        static string Base64Decode(string base64EncodedData)
+        {
             var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
@@ -138,14 +140,61 @@ namespace Crypto
                 {
                     return nr;
                 }
+
                 Console.WriteLine("Unable to parse input as ulong. Try again.");
             } while (true);
         }
-        
+
         public static ulong CheckEven(ulong input)
         {
             if (input == 2) return input;
             return input % 2 == 0 ? input - 1 : input;
+        }
+
+        public static byte[] GetBytes(string s)
+        {
+            byte[] result = new byte[s.Length];
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] >= 'a' && s[i] <= 'z')
+                {
+                    result[i] = (byte) (s[i] - 'a');
+                    continue;
+                }
+
+                if (s[i] >= 'A' && s[i] <= 'Z')
+                {
+                    result[i] = (byte) (s[i] - 'A' + 26);
+                    continue;
+                }
+
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return result;
+        }
+
+        public static string GetString(byte[] b)
+        {
+            StringBuilder sb = new StringBuilder(b.Length);
+            for (int i = 0; i < b.Length; i++)
+            {
+                if (b[i] >= 0 && b[i] < 26)
+                {
+                    sb.Append((char) ('a' + b[i]));
+                    continue;
+                }
+
+                if (b[i] >= 26 && b[i] < 52)
+                {
+                    sb.Append((char) ('A' + b[i] - 26));
+                    continue;
+                }
+
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return sb.ToString();
         }
     }
 }

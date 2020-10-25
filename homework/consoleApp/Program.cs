@@ -170,7 +170,7 @@ namespace consoleApp
             Console.WriteLine($"n = p * q : {n}");
             Console.WriteLine($"m = (p - 1) * (q - 1) : {m}");
 
-            Tuple<ulong, ulong> RSAValues = RSA.RSACalculations(m);
+            Tuple<ulong, ulong> RSAValues = RSA.RsaCalculations(m);
             ulong e = RSAValues.Item1;
             ulong d = RSAValues.Item2;
 
@@ -213,7 +213,7 @@ namespace consoleApp
             ulong m = (p - 1) * (q - 1);
             Console.WriteLine($"m = {m}");
 
-            Tuple<ulong, ulong> RSAValues = RSA.RSACalculations(m);
+            Tuple<ulong, ulong> RSAValues = RSA.RsaCalculations(m);
             ulong e = RSAValues.Item1;
             ulong d = RSAValues.Item2;
 

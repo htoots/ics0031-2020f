@@ -74,6 +74,11 @@ namespace webApp.Controllers
             }
             if (ModelState.IsValid)
             {
+                byte[] enbytes = RSA.RsaEncryptString(RsaClass.BaseText, RsaClass.PrimeP, RsaClass.PrimeQ);
+                // dirty debug
+                //Console.WriteLine(Helpers.GetString(enbytes));
+                //Console.WriteLine("Debug:" + Helpers.GetString(RSA.RsaDecrypt(enbytes, RsaClass.PrimeP, RsaClass.PrimeQ)));
+                RsaClass.EncryptedText = enbytes;
                 _context.Add(RsaClass);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
