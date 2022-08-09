@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain
 {
@@ -14,6 +15,9 @@ namespace Domain
         public ulong Key1 { get; set; }
         
         public ulong Key2 { get; set; }
+        
+        public string UserId { get; set; }
+        public IdentityUser User { get; set; }
 
     }
 }

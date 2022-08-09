@@ -47,40 +47,6 @@ namespace webApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiffieHellmanResults",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    SecretA = table.Column<ulong>(nullable: false),
-                    SecretB = table.Column<ulong>(nullable: false),
-                    ModulusP = table.Column<ulong>(nullable: false),
-                    BaseG = table.Column<ulong>(nullable: false),
-                    Key1 = table.Column<ulong>(nullable: false),
-                    Key2 = table.Column<ulong>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DiffieHellmanResults", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RsaResults",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PrimeP = table.Column<ulong>(nullable: false),
-                    PrimeQ = table.Column<ulong>(nullable: false),
-                    BaseText = table.Column<string>(nullable: true),
-                    EncryptedText = table.Column<byte[]>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RsaResults", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -186,6 +152,54 @@ namespace webApp.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "DiffieHellmanResults",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SecretA = table.Column<ulong>(nullable: false),
+                    SecretB = table.Column<ulong>(nullable: false),
+                    ModulusP = table.Column<ulong>(nullable: false),
+                    BaseG = table.Column<ulong>(nullable: false),
+                    Key1 = table.Column<ulong>(nullable: false),
+                    Key2 = table.Column<ulong>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiffieHellmanResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DiffieHellmanResults_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RsaResults",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PrimeP = table.Column<ulong>(nullable: false),
+                    PrimeQ = table.Column<ulong>(nullable: false),
+                    BaseText = table.Column<string>(nullable: true),
+                    EncryptedText = table.Column<byte[]>(nullable: true),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RsaResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RsaResults_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -222,6 +236,16 @@ namespace webApp.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiffieHellmanResults_UserId",
+                table: "DiffieHellmanResults",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RsaResults_UserId",
+                table: "RsaResults",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

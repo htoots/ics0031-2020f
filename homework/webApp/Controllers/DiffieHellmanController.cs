@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Crypto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using webApp.Data;
 
 namespace webApp.Controllers
 {
+    [Authorize]
     public class DiffieHellmanController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,10 +23,18 @@ namespace webApp.Controllers
             _context = context;
         }
 
+        public string GetUserId()
+        {
+            var claim = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier);
+            return claim?.Value ?? "";
+        }
+
         // GET: DiffieHellman
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DiffieHellmanResults.ToListAsync());
+            var userId = GetUserId();
+            return View(await _context.DiffieHellmanResults.Where(c => c.UserId == userId).ToListAsync());
         }
 
         // GET: DiffieHellman/Details/5
@@ -82,8 +93,13 @@ namespace webApp.Controllers
                     diffieHellmanClass.SecretB, diffieHellmanClass.ModulusP, diffieHellmanClass.BaseG);
                 diffieHellmanClass.Key1 = keyList[0];
                 diffieHellmanClass.Key2 = keyList[1];
-                _context.Add(diffieHellmanClass);
-                await _context.SaveChangesAsync();
+                diffieHellmanClass.UserId = GetUserId();
+                if (diffieHellmanClass.UserId != "")
+                {
+                    _context.Add(diffieHellmanClass);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(diffieHellmanClass);
@@ -96,9 +112,8 @@ namespace webApp.Controllers
             {
                 return NotFound();
             }
-
             var diffieHellmanClass = await _context.DiffieHellmanResults.FindAsync(id);
-            if (diffieHellmanClass == null)
+            if (diffieHellmanClass == null || diffieHellmanClass.UserId != GetUserId())
             {
                 return NotFound();
             }
@@ -117,7 +132,10 @@ namespace webApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            diffieHellmanClass.UserId = GetUserId();
+            
+            if (ModelState.IsValid && diffieHellmanClass.UserId != "")
             {
                 try
                 {
@@ -150,7 +168,7 @@ namespace webApp.Controllers
 
             var diffieHellmanClass = await _context.DiffieHellmanResults
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (diffieHellmanClass == null)
+            if (diffieHellmanClass == null || diffieHellmanClass.UserId != GetUserId())
             {
                 return NotFound();
             }
@@ -164,8 +182,11 @@ namespace webApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var diffieHellmanClass = await _context.DiffieHellmanResults.FindAsync(id);
-            _context.DiffieHellmanResults.Remove(diffieHellmanClass);
-            await _context.SaveChangesAsync();
+            if (diffieHellmanClass.UserId == GetUserId())
+            {
+                _context.DiffieHellmanResults.Remove(diffieHellmanClass);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Crypto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using webApp.Data;
 
 namespace webApp.Controllers
 {
+    [Authorize]
     public class RSAController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,11 +23,19 @@ namespace webApp.Controllers
         {
             _context = context;
         }
+        
+        public string GetUserId()
+        {
+            var claim = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier);
+            return claim?.Value ?? "";
+        }
 
         // GET: RSA
         public async Task<IActionResult> Index()
         {
-            return View(await _context.RsaResults.ToListAsync());
+            var userId = GetUserId();
+            return View(await _context.RsaResults.Where(c => c.UserId == userId).ToListAsync());
         }
 
         // GET: RSA/Details/5
@@ -79,8 +90,13 @@ namespace webApp.Controllers
                 //Console.WriteLine(Helpers.GetString(enbytes));
                 //Console.WriteLine("Debug:" + Helpers.GetString(RSA.RsaDecrypt(enbytes, RsaClass.PrimeP, RsaClass.PrimeQ)));
                 RsaClass.EncryptedText = enbytes;
-                _context.Add(RsaClass);
-                await _context.SaveChangesAsync();
+                RsaClass.UserId = GetUserId();
+                if (RsaClass.UserId != "")
+                {
+                    _context.Add(RsaClass);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(RsaClass);
@@ -95,7 +111,7 @@ namespace webApp.Controllers
             }
 
             var rSAClass = await _context.RsaResults.FindAsync(id);
-            if (rSAClass == null)
+            if (rSAClass == null || rSAClass.UserId != GetUserId())
             {
                 return NotFound();
             }
@@ -114,7 +130,9 @@ namespace webApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            rSAClass.UserId = GetUserId();
+
+            if (ModelState.IsValid && rSAClass.UserId != "")
             {
                 try
                 {
@@ -147,7 +165,7 @@ namespace webApp.Controllers
 
             var rSAClass = await _context.RsaResults
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (rSAClass == null)
+            if (rSAClass == null || rSAClass.UserId != GetUserId())
             {
                 return NotFound();
             }
@@ -161,8 +179,11 @@ namespace webApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var rSAClass = await _context.RsaResults.FindAsync(id);
-            _context.RsaResults.Remove(rSAClass);
-            await _context.SaveChangesAsync();
+            if (rSAClass.UserId == GetUserId())
+            {
+                _context.RsaResults.Remove(rSAClass);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

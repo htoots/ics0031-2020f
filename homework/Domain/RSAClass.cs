@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Domain
 {
     public class RSAClass
@@ -10,6 +12,9 @@ namespace Domain
         public string BaseText { get; set; }
         
         public byte[] EncryptedText { get; set; }
+        
+        public string UserId { get; set; }
+        public IdentityUser User { get; set; }
         
     }
 }
